@@ -79,31 +79,32 @@ public class EmployeeController {
 		return "redirect:/employees";
 	}
 
-	// 従業員更新画面
-	@GetMapping("/{code}/update")
-	public String edit(@PathVariable String code, Model model) {
-		Employee employee = employeeService.findByCode(code);
-		model.addAttribute("employee", employee);
-		return "employees/update";
-	}
+    // 従業員更新画面
+    @GetMapping("/{code}/update")
+    public String edit(@PathVariable String code, Model model) {
+        Employee employee = employeeService.findByCode(code);
+        model.addAttribute("employee", employee);
+        return "employees/update";
+    }
 
-	// 従業員更新処理
-	@PostMapping("/{code}/update")
-	public String update(@PathVariable String code, @Validated Employee employee, BindingResult res, Model model) {
-		if (res.hasErrors()) {
-			model.addAttribute("employee", employee);
-			return "employees/update";
-		}
+    // 従業員更新処理
+    @PostMapping("/{code}/update")
+    public String update(@PathVariable String code, @Validated Employee employee, BindingResult res, Model model) {
+        if (res.hasErrors()) {
+            model.addAttribute("employee", employee);
+            return "employees/update";
+        }
 
-		employee.setCode(code);
-		ErrorKinds result = employeeService.updateEmployee(employee);
-		if (ErrorMessage.contains(result)) {
-			model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-			model.addAttribute("employee", employee);
-			return "employees/update";
-		}
-		return "redirect:/employees";
-	}
+        employee.setCode(code);
+        ErrorKinds result = employeeService.updateEmployee(employee);
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            model.addAttribute("employee", employee);
+            return "employees/update";
+        }
+
+        return "redirect:/employees";
+    }
 
 	// 従業員削除処理
 	@PostMapping(value = "/{code}/delete")

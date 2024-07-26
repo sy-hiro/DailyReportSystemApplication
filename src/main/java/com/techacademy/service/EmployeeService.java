@@ -70,9 +70,10 @@ public class EmployeeService {
             // パスワードが空の場合、既存のパスワードを保持
             employee.setPassword(beforeEmployee.getPassword());
         }
-
+        employee.setCreatedAt(beforeEmployee.getCreatedAt());
         employee.setUpdatedAt(LocalDateTime.now());
-
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        
         employeeRepository.save(employee);
         return ErrorKinds.SUCCESS;
     }
