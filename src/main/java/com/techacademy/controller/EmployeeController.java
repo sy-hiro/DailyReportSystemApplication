@@ -90,8 +90,15 @@ public class EmployeeController {
     // 従業員更新処理
     @PostMapping("/{code}/update")
     public String update(@PathVariable String code, @Validated Employee employee, BindingResult res, Model model) {
-        if (res.hasErrors()) {
-            model.addAttribute("employee", employee);
+    	 if (res.hasErrors()) {
+             model.addAttribute("employee", employee);
+             return "employees/update";
+         }
+    	 
+    	if ("".equals(employee.getPassword())) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.BLANK_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.BLANK_ERROR));
+            model.addAttribute("employee", employeeService.findByCode(code));
             return "employees/update";
         }
 
@@ -99,7 +106,7 @@ public class EmployeeController {
         ErrorKinds result = employeeService.updateEmployee(employee);
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-            model.addAttribute("employee", employee);
+            model.addAttribute("employee", employeeService.findByCode(code));
             return "employees/update";
         }
 

@@ -46,8 +46,9 @@ public class EmployeeService {
         LocalDateTime now = LocalDateTime.now();
         employee.setCreatedAt(now);
         employee.setUpdatedAt(now);
-
         employeeRepository.save(employee);
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+
         return ErrorKinds.SUCCESS;
     }
 
@@ -57,7 +58,7 @@ public class EmployeeService {
     	Employee beforeEmployee = findByCode(employee.getCode());
     	if (beforeEmployee == null) {
 		// FIXME 指定されたデーターが存在しない時、エラーを返す
-    	//	return  
+		return ErrorKinds.NOT_FOUND_ERROR;
     	}
         // パスワードチェック
         if (!"".equals(employee.getPassword())) {
@@ -65,11 +66,7 @@ public class EmployeeService {
             if (ErrorKinds.CHECK_OK != result) {
                 return result;
             }
-            employee.setPassword(passwordEncoder.encode(employee.getPassword()));
-        } else {
-            // パスワードが空の場合、既存のパスワードを保持
-            employee.setPassword(beforeEmployee.getPassword());
-        }
+        } 
         employee.setCreatedAt(beforeEmployee.getCreatedAt());
         employee.setUpdatedAt(LocalDateTime.now());
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));

@@ -21,6 +21,8 @@ public enum ErrorKinds {
     // チェックOK
     CHECK_OK,
     // 正常終了
-    SUCCESS;
+    SUCCESS,
+	//データが存在しない場合エラー
+	NOT_FOUND_ERROR;
 
 }
