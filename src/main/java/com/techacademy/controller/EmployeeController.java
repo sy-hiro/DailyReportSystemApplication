@@ -79,39 +79,51 @@ public class EmployeeController {
 		return "redirect:/employees";
 	}
 
-    // 従業員更新画面
-    @GetMapping("/{code}/update")
-    public String edit(@PathVariable String code, Model model) {
-        Employee employee = employeeService.findByCode(code);
-        model.addAttribute("employee", employee);
-        return "employees/update";
-    }
+	// 従業員更新画面
+	@GetMapping("/{code}/update")
+	public String edit(@PathVariable String code, Model model) {
+		Employee employee = employeeService.findByCode(code);
+		model.addAttribute("employee", employee);
+		return "employees/update";
+	}
 
-    // 従業員更新処理
-    @PostMapping("/{code}/update")
-    public String update(@PathVariable String code, @Validated Employee employee, BindingResult res, Model model) {
-    	 if (res.hasErrors()) {
-             model.addAttribute("employee", employee);
-             return "employees/update";
-         }
-    	 
-    	if ("".equals(employee.getPassword())) {
-            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.BLANK_ERROR),
-                    ErrorMessage.getErrorValue(ErrorKinds.BLANK_ERROR));
-            model.addAttribute("employee", employeeService.findByCode(code));
-            return "employees/update";
-        }
+	// 従業員更新処理
+	@PostMapping("/{code}/update")
+	public String update(@PathVariable String code, @Validated Employee employee, BindingResult res, Model model) {
+		if (res.hasErrors()) {
+			model.addAttribute("employee", employee);
+			return "employees/update";
+		}
 
-        employee.setCode(code);
-        ErrorKinds result = employeeService.updateEmployee(employee);
-        if (ErrorMessage.contains(result)) {
-            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-            model.addAttribute("employee", employeeService.findByCode(code));
-            return "employees/update";
-        }
+		// パスワードが空でない場合のみチェックを行う
+		if (!"".equals(employee.getPassword())) {
+			// パスワードの桁数チェック
+			if (!employee.getPassword().matches("^\\d{8,16}$")) {
+				model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.RANGECHECK_ERROR),
+						ErrorMessage.getErrorValue(ErrorKinds.RANGECHECK_ERROR));
+				model.addAttribute("employee", employee);
+				return "employees/update";
+			}
 
-        return "redirect:/employees";
-    }
+			if (!employee.getPassword().matches("[a-zA-Z]")) {
+				model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.HALFSIZE_ERROR),
+						ErrorMessage.getErrorValue(ErrorKinds.HALFSIZE_ERROR));
+				model.addAttribute("employee", employeeService.findByCode(code));
+
+				return "employees/update";
+			}
+		}
+
+		employee.setCode(code);
+		ErrorKinds result = employeeService.updateEmployee(employee);
+		if (ErrorMessage.contains(result)) {
+			model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+			model.addAttribute("employee", employeeService.findByCode(code));
+			return "employees/update";
+		}
+
+		return "redirect:/employees";
+	}
 
 	// 従業員削除処理
 	@PostMapping(value = "/{code}/delete")
