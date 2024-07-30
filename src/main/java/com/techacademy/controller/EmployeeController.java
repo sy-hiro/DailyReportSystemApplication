@@ -98,20 +98,27 @@ public class EmployeeController {
 		// パスワードが空でない場合のみチェックを行う
 		if (!"".equals(employee.getPassword())) {
 			// パスワードの桁数チェック
-			if (!employee.getPassword().matches("^\\d{8,16}$")) {
+			if (employee.getPassword().length() < 8 || employee.getPassword().length() > 16) {
 				model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.RANGECHECK_ERROR),
 						ErrorMessage.getErrorValue(ErrorKinds.RANGECHECK_ERROR));
 				model.addAttribute("employee", employee);
 				return "employees/update";
 			}
-
-			if (!employee.getPassword().matches("[a-zA-Z]")) {
+			// 半角チェック
+			if (!employee.getPassword().matches(".*[a-zA-Z].*")) {
 				model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.HALFSIZE_ERROR),
 						ErrorMessage.getErrorValue(ErrorKinds.HALFSIZE_ERROR));
 				model.addAttribute("employee", employeeService.findByCode(code));
 
 				return "employees/update";
 			}
+
+			// パスワードのハッシュ化
+			employee.setPassword(employeeService.hashPassword(employee.getPassword()));
+		} else {
+			// パスワードが空の場合、既存のパスワードを保持
+			Employee beforeEmployee = employeeService.findByCode(code);
+			employee.setPassword(beforeEmployee.getPassword());
 		}
 
 		employee.setCode(code);
@@ -124,7 +131,6 @@ public class EmployeeController {
 
 		return "redirect:/employees";
 	}
-
 	// 従業員削除処理
 	@PostMapping(value = "/{code}/delete")
 	public String delete(@PathVariable String code, @AuthenticationPrincipal UserDetail userDetail, Model model) {
@@ -137,4 +143,5 @@ public class EmployeeController {
 
 		return "redirect:/employees";
 	}
+	
 }

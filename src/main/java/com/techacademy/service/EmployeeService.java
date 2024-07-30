@@ -27,6 +27,11 @@ public class EmployeeService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
+	// パスワードをハッシュ化するメソッド
+	public String hashPassword(String rawPassword) {
+		return passwordEncoder.encode(rawPassword);
+	}
+		
 	// 従業員保存
 	@Transactional
 	public ErrorKinds save(Employee employee) {
@@ -62,7 +67,7 @@ public class EmployeeService {
 			return ErrorKinds.NOT_FOUND_ERROR;
 		}
 		// パスワードが空の場合、既存のパスワードを保持
-		employee.setPassword(beforeEmployee.getPassword());
+		//employee.setPassword(beforeEmployee.getPassword());
 
 		employee.setCreatedAt(beforeEmployee.getCreatedAt());
 		employee.setUpdatedAt(LocalDateTime.now());
