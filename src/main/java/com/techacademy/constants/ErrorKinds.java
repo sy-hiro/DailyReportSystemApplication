@@ -23,6 +23,17 @@ public enum ErrorKinds {
     // 正常終了
     SUCCESS,
 	//データが存在しない場合エラー
-	NOT_FOUND_ERROR;
+	NOT_FOUND_ERROR,
+	//日付が空の場合のエラー
+	REPORT_DATE_BLANK_ERROR,
+	// タイトルが空の場合のエラー
+	TITLE_BLANK_ERROR,
+	// タイトルの文字数チェック用エラー
+	TITLE_LENGTH_ERROR,
+	// 内容が空の場合のエラー
+	CONTENT_BLANK_ERROR,
+	// 内容の文字数チェック用エラー
+	CONTENT_LENGTH_ERROR;
+	
 
 }

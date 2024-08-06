@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.entity.Employee;
+import com.techacademy.entity.Report;
 import com.techacademy.repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {
-
+	private Report report;
 	private final EmployeeRepository employeeRepository;
 	private final PasswordEncoder passwordEncoder;
 
@@ -119,6 +120,14 @@ public class EmployeeService {
 
 		return ErrorKinds.CHECK_OK;
 	}
+	
+	//レポートの名前を取得
+//	private String getName(Report report) {
+//		var reportCode = report.getEmployeeCode();
+//		Optional<Employee> option = employeeRepository.findById(reportCode);
+//		Employee employee = option.orElse(null);
+//		return employee.getName();
+//	}
 
 	// 従業員パスワードの半角英数字チェック処理
 	private boolean isHalfSizeCheckError(Employee employee) {
