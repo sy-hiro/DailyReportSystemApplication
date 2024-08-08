@@ -1,5 +1,7 @@
 package com.techacademy.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -31,11 +33,19 @@ public class ReportController {
 
 	// 日報一覧画面
 	@GetMapping
-	public String list(Model model) {
-		// データベースから全ての日報データを取得し、ビューに渡す
-		model.addAttribute("reportList", reportService.findAll());
-		// リストサイズ（件数）もビューに渡す
-		model.addAttribute("listSize", reportService.findAll().size());
+	public String list(Model model, @AuthenticationPrincipal UserDetail userDetail) {
+		// 管理者か判断
+		if (userDetail.getEmployee().getRole() == Employee.Role.ADMIN) {
+			// データベースから全ての日報データを取得し、ビューに渡す
+			model.addAttribute("reportList", reportService.findAll());
+			// リストサイズ（件数）もビューに渡す
+			model.addAttribute("listSize", reportService.findAll().size());
+		} else {
+			// 一般権限の場合、自分が登録した日報のみを取得
+			List<Report> userReports = reportService.findByEmployee(userDetail.getEmployee());
+			model.addAttribute("reportList", userReports);
+			model.addAttribute("listSize", userReports.size());
+		}
 		return "reports/list";
 	}
 
@@ -63,25 +73,43 @@ public class ReportController {
 	}
 
 	// 日報新規登録処理
-    @PostMapping("/add")
-    public String add(@Validated Report report, BindingResult result, Model model, @AuthenticationPrincipal UserDetail userDetail) {
-        if (result.hasErrors()) {
-            return "reports/new";
-        }
-        if (!"".equals(report.getTitle())) {
-        	if(report.getTitle().length() > 100) {
-        		model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.TITLE_LENGTH_ERROR),
-                        ErrorMessage.getErrorValue(ErrorKinds.TITLE_LENGTH_ERROR));
-                model.addAttribute("report", report);
-                return "reports/new";
-        	}
-    	
-        }
-        reportService.save(report, userDetail);
-        return "redirect:/reports";
-    }
+	@PostMapping("/add")
+	public String add(@Validated Report report, BindingResult result, Model model, @AuthenticationPrincipal UserDetail userDetail) {
+	    if (result.hasErrors()) {
+	        // ログインしているユーザー情報を再度設定
+	        Employee employee = userDetail.getEmployee();
+	        report.setEmployee(employee);
+	        report.setEmployeeCode(employee.getCode());
 
+	        return "reports/new";
+	    }
+	    
+	    // タイトルの桁数チェック
+	    if (report.getTitle().length() > 100) {
+	        model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.TITLE_LENGTH_ERROR),
+	                ErrorMessage.getErrorValue(ErrorKinds.TITLE_LENGTH_ERROR));
+	        model.addAttribute("report", report);
+	        Employee employee = userDetail.getEmployee();
+	        report.setEmployee(employee);
+	        report.setEmployeeCode(employee.getCode());
+	        return "reports/new";
+	    }
 
+	    // 内容の桁数チェック
+	    if (report.getContent().length() > 600) {
+	        model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.CONTENT_LENGTH_ERROR),
+	                ErrorMessage.getErrorValue(ErrorKinds.CONTENT_LENGTH_ERROR));
+	        model.addAttribute("report", report);
+	        Employee employee = userDetail.getEmployee();
+	        report.setEmployee(employee);
+	        report.setEmployeeCode(employee.getCode());
+	        return "reports/new";
+	    }
+
+	    // 日報を保存
+	    reportService.save(report, userDetail);
+	    return "redirect:/reports";
+	}
 
 	// 日報更新画面を表示
 	@GetMapping("/{id}/update")
@@ -93,4 +121,33 @@ public class ReportController {
 		model.addAttribute("report", report);
 		return "reports/update";
 	}
+	
+	// 日報更新処理
+	@PostMapping("/{id}/update")
+	public String updateReport(@Validated Report report, BindingResult result,@PathVariable Long id, Model model) {
+	    if (result.hasErrors()) {
+	        // バリデーションエラーがあれば、エラーメッセージと共に再度画面を表示
+	        //model.addAttribute("report", report);
+	        return "reports/update";
+	    }
+
+	    // 既存のレコードを更新する
+	    ErrorKinds updateResult = reportService.updateReport(id, report);
+	    if (updateResult == ErrorKinds.DATECHECK_ERROR) {
+	    	// 同じ日付のレコードが存在する場合、エラーメッセージを表示
+	        model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR),
+	                          ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR));
+	        model.addAttribute("report", report);
+	        return "reports/update";
+	    }
+
+	    return "redirect:/reports";
+	}
+    
+	// 日報削除処理
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        reportService.delete(id);
+        return "redirect:/reports";
+    }
 }

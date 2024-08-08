@@ -44,7 +44,7 @@ public class ErrorMessage {
 			// 内容の文字数チェック用エラーメッセージ
 			put(ErrorKinds.CONTENT_LENGTH_ERROR,
 					new ArrayList<String>(Arrays.asList("contentError", "600文字以下で入力してください")));
-
+			
 		}
 	};
 

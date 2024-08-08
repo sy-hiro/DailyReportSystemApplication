@@ -21,11 +21,14 @@ public class EmployeeService {
 	private Report report;
 	private final EmployeeRepository employeeRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ReportService reportService;  // ReportServiceの追加
+
 
 	@Autowired
-	public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
+	public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, ReportService reportService) {
 		this.employeeRepository = employeeRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.reportService = reportService;  // ReportServiceの初期化
 	}
 
 	// パスワードをハッシュ化するメソッド
@@ -78,19 +81,46 @@ public class EmployeeService {
 	}
 
 	// 従業員削除
-	@Transactional
-	public ErrorKinds delete(String code, UserDetail userDetail) {
+	//@Transactional
+	//public ErrorKinds delete(String code, UserDetail userDetail) {
 		// 自分を削除しようとした場合はエラーメッセージを表示
-		if (code.equals(userDetail.getEmployee().getCode())) {
-			return ErrorKinds.LOGINCHECK_ERROR;
-		}
-		Employee employee = findByCode(code);
-		LocalDateTime now = LocalDateTime.now();
-		employee.setUpdatedAt(now);
-		employee.setDeleteFlg(true);
+		//if (code.equals(userDetail.getEmployee().getCode())) {
+			//return ErrorKinds.LOGINCHECK_ERROR;
+		//}
+		//Employee employee = findByCode(code);
+		//LocalDateTime now = LocalDateTime.now();
+		//employee.setUpdatedAt(now);
+		//employee.setDeleteFlg(true);
 
-		return ErrorKinds.SUCCESS;
-	}
+		//return ErrorKinds.SUCCESS;
+	//}
+
+	// 従業員削除
+    @Transactional
+    public ErrorKinds delete(String code, UserDetail userDetail) {
+        // 自分を削除しようとした場合はエラーメッセージを表示
+        if (code.equals(userDetail.getEmployee().getCode())) {
+            return ErrorKinds.LOGINCHECK_ERROR;
+        }
+
+        Employee employee = findByCode(code);
+        if (employee == null) {
+            return ErrorKinds.NOT_FOUND_ERROR;
+        }
+
+        // 削除対象の従業員に紐づいている日報情報の削除
+        List<Report> reportList = reportService.findByEmployee(employee);
+        for (Report report : reportList) {
+            reportService.delete(report.getId());
+        }
+
+        // 従業員情報の削除（論理削除）
+        employee.setUpdatedAt(LocalDateTime.now());
+        employee.setDeleteFlg(true);
+        employeeRepository.save(employee);
+
+        return ErrorKinds.SUCCESS;
+    }
 
 	// 従業員一覧表示処理
 	public List<Employee> findAll() {
@@ -121,14 +151,6 @@ public class EmployeeService {
 		return ErrorKinds.CHECK_OK;
 	}
 	
-	//レポートの名前を取得
-//	private String getName(Report report) {
-//		var reportCode = report.getEmployeeCode();
-//		Optional<Employee> option = employeeRepository.findById(reportCode);
-//		Employee employee = option.orElse(null);
-//		return employee.getName();
-//	}
-
 	// 従業員パスワードの半角英数字チェック処理
 	private boolean isHalfSizeCheckError(Employee employee) {
 		// 半角英数字チェック
