@@ -1,0 +1,33 @@
+# バージョンの指定
+version: "3.9"
+# 各Dockerfileの指定
+services:
+  # MySQL用のコンテナ（dbという識別名（キー）は任意で設定したもの）
+  db:
+    build: ./db
+    image: "myimage:db"
+    ports:
+      - 4306:3306
+    expose:               # 他のコンテナと通信できるポート番号の指定
+      - 3306
+    container_name: "DailyReportSystemApplication_container"
+    volumes:              # データの永続化の設定
+      - db_data:/var/lib/mysql       # ボリューム名:コンテナのディレクトリ
+
+  wordpress:
+    image: "wordpress:6.1.1-php8.2-apache"
+    container_name: "wp_container"
+    ports:
+     - 8080:80
+    links:
+     - "db:db_container"
+    environment:
+     WORDPRESS_DB_HOST: DailyReportSystemApplication_container:3306
+     WORDPRESS_DB_NAME: wordpress
+     WORDPRESS_DB_USER: devuser
+     WORDPRESS_DB_PASSWORD: password
+     
+# ボリュームの設定
+volumes:
+  db_data:
+ 
