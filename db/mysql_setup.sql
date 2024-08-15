@@ -1,4 +1,0 @@
-CREATE DATABASE IF NOT EXISTS DailyReportSystemApplication_develop CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-CREATE USER IF NOT EXISTS 'devuser'@'%' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON *.* TO 'devuser'@'%';
-CREATE DATABASE IF NOT EXISTS wordpress CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
