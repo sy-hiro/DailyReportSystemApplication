@@ -1,17 +1,29 @@
 # バージョンの指定
 version: "3.9"
 # 各Dockerfileの指定
+
+networks:
+  mynetwork:
 services:
   # Apache2・Java用のコンテナ（webという識別名（キー）は任意で設定したもの）
   web:
     build: ./web          # Dockerfileが格納されたフォルダの相対パス
     image: "myimage:web2"  # 設定したいコンテナイメージ名
     ports:                # ポートフォワーディングの設定
-      - 80:80
+      - 8080:8080
       - 443:443
     links:                # このコンテナが依存するコンテナの識別名（キー）とそのエイリアス名（別名）の指定
       - "db:db_container"
     container_name: "web_container2" # このコンテナの名前の指定
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db_container2:3306/daily_report_system?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: repuser
+      SPRING_DATASOURCE_PASSWORD: reppass
+
+    depends_on: 
+      - db
+    networks:
+      - mynetwork
   # MySQL用のコンテナ（dbという識別名（キー）は任意で設定したもの）
   db:
     build: ./db
@@ -21,8 +33,16 @@ services:
     expose:               # 他のコンテナと通信できるポート番号の指定
       - 3306
     container_name: "db_container2"
+    environment:
+      MYSQL_DATABASE: "DailyReportSystemApplication_develop"
+      MYSQL_USER: "repuser" 
+      MYSQL_PASSWORD: "reppass" 
+      MYSQL_ROOT_PASSWORD: "password"
     volumes:              # データの永続化の設定
       - db_data:/var/lib/mysql       # ボリューム名:コンテナのディレクトリ
+
+    networks:
+      - mynetwork
 
 # ボリュームの設定
 volumes:
