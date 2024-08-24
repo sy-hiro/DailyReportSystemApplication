@@ -10,7 +10,7 @@ services:
     build: ./web          # Dockerfileが格納されたフォルダの相対パス
     image: "myimage:web2"  # 設定したいコンテナイメージ名
     ports:                # ポートフォワーディングの設定
-      - 8080:8080
+      - 80:80
       - 443:443
     links:                # このコンテナが依存するコンテナの識別名（キー）とそのエイリアス名（別名）の指定
       - "db:db_container"

@@ -29,7 +29,7 @@ RUN sed -i -e "s/^<\/VirtualHost>/RewriteEngine on/" /etc/apache2/sites-availabl
 RUN echo 'RewriteCond %{HTTPS} off' >> /etc/apache2/sites-available/000-default.conf
 RUN echo 'RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L]' >> /etc/apache2/sites-available/000-default.conf
 RUN echo '</VirtualHost>' >> /etc/apache2/sites-available/000-default.conf
-EXPOSE 8080
+EXPOSE 80
 EXPOSE 443
 
 # 6. JDKとSpring Bootアプリケーションのインストール
