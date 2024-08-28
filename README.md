@@ -16,6 +16,7 @@
 ### 1. リポジトリをクローン
 
 git clone https://github.com/your-username/DailyReportSystemApplication.git
+
 cd DailyReportSystemApplication
 
 ### 2. Dockerを使用して環境をセットアップ
