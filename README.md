@@ -19,6 +19,22 @@
 git clone https://github.com/your-username/DailyReportSystemApplication.git
 cd DailyReportSystemApplication
 
+2. Dockerを使用して環境をセットアップ
+
+docker-compose up -d
+
+ブラウザで以下のURLにアクセスすることで、アプリケーションを使用できます。
+
+http://localhost:8080
+
+## 開発環境
+・Java
+・Spring Boot
+・MySQL
+・Docker
+
+## 使用動画
+
 # ログイン
 
 https://github.com/user-attachments/assets/b2008be1-031c-424f-9eb7-3f1466399374
