@@ -1,3 +1,23 @@
+# 日報管理システム
+
+## 概要
+
+このプロジェクトは、従業員の日報を管理するシステムです。従業員は日報を作成・更新・削除でき、管理者は全ての日報を閲覧・管理できます。
+本システムはJavaとSpring Bootを使用して開発しており、MySQLデータベースを使用しています。Dockerを利用して、システム全体をコンテナ化しています。
+
+## 主な機能
+
+- 従業員のログイン・ログアウト機能
+- 日報の作成・更新・削除機能
+- 日報の日付重複チェック機能
+
+## セットアップ手順
+
+### 1. リポジトリをクローン
+
+```bash
+git clone https://github.com/your-username/DailyReportSystemApplication.git
+cd DailyReportSystemApplication
 
 # ログイン
 
