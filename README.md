@@ -15,11 +15,10 @@
 
 ### 1. リポジトリをクローン
 
-```bash
 git clone https://github.com/your-username/DailyReportSystemApplication.git
 cd DailyReportSystemApplication
 
-2. Dockerを使用して環境をセットアップ
+###2. Dockerを使用して環境をセットアップ
 
 docker-compose up -d
 
