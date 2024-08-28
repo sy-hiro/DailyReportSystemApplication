@@ -18,7 +18,7 @@
 git clone https://github.com/your-username/DailyReportSystemApplication.git
 cd DailyReportSystemApplication
 
-###2. Dockerを使用して環境をセットアップ
+### 2. Dockerを使用して環境をセットアップ
 
 docker-compose up -d
 
@@ -27,10 +27,11 @@ docker-compose up -d
 http://localhost:8080
 
 ## 開発環境
-・Java
-・Spring Boot
-・MySQL
-・Docker
+
+- Java
+- Spring Boot
+- MySQL
+- Docker
 
 ## 使用動画
 
