@@ -27,6 +27,12 @@ docker-compose up -d
 
 http://localhost:8080
 
+ログイン
+社員番号　１、パスワード　kirataro
+社員番号　２、パスワード　tanataro
+（社員番号２では権限がないのでログインできないです）
+
+
 ## 開発環境
 
 - Java
