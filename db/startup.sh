@@ -1,4 +1,4 @@
 #!/bin/bash
 
-#MySQLの起動
-mysqld_safe
+# MySQLの起動
+exec mysqld

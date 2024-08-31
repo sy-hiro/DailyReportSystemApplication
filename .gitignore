@@ -1,0 +1,41 @@
+# Maven に関連するファイルを無視
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# IDE 設定ファイルを無視
+/.settings/
+/.project
+/.classpath
+/.vscode/
+
+# MacOS で生成されるファイルを無視
+.DS_Store
+
+# ログファイルを無視
+/log/
+/*.log
+
+# 環境変数ファイルを無視
+.env
+.env.local
+.env.*.local
+
+# IntelliJ IDEA に関連するファイルを無視
+/.idea/
+/*.iml
+
+# Docker 関連ファイルを無視
+db_data/
+*.pid
+/tmp/
+
+# JAR ファイルを無視
+*.jar
+
+# テストカバレッジファイルを無視
+/coverage/
+/test-results/
